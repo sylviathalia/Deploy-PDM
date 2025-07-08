@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>YOLOv8 Web</title>
+</head>
+<body style="text-align: center;">
+  <h2>Upload Gambar untuk Deteksi</h2>
+  <input type="file" id="imageInput">
+  <button onclick="sendImage()">Deteksi</button>
+  <br><br>
+  <img id="resultImg" width="500"/>
+
+  <script>
+    async function sendImage() {
+      const input = document.getElementById('imageInput');
+      const data = new FormData();
+      data.append('image', input.files[0]);
+
+      const res = await fetch('/predict', {
+        method: 'POST',
+        body: data
+      });
+      const result = await res.json();
+      document.getElementById('resultImg').src = 'data:image/jpeg;base64,' + result.result;
+    }
+  </script>
+</body>
+</html>
