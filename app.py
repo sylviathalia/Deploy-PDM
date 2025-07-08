@@ -3,6 +3,7 @@ from ultralytics import YOLO
 import cv2
 import numpy as np
 import base64
+import os
 
 app = Flask(__name__)
 model = YOLO("model/best.pt")
