@@ -1,3 +1,16 @@
+from flask import Flask, request, render_template, jsonify
+from ultralytics import YOLO
+import cv2
+import numpy as np
+import os
+
+app = Flask(__name__)
+model = YOLO("model/best.pt")
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
 @app.route('/predict', methods=['POST'])
 def predict():
     file = request.files['image']
