@@ -1,28 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>YOLOv8 Web</title>
+    <title>YOLO Detection</title>
 </head>
-<body style="text-align: center;">
-  <h2>Upload Gambar untuk Deteksi</h2>
-  <input type="file" id="imageInput">
-  <button onclick="sendImage()">Deteksi</button>
-  <br><br>
-  <img id="resultImg" width="500"/>
+<body>
+    <h1>Upload Image</h1>
+    <form id="upload-form" enctype="multipart/form-data">
+        <input type="file" name="image" id="image-input" accept="image/*">
+        <button type="submit">Upload</button>
+    </form>
+    <br>
+    <img id="result-img" style="max-width: 500px;">
+    <pre id="labels-output"></pre>
 
-  <script>
-    async function sendImage() {
-      const input = document.getElementById('imageInput');
-      const data = new FormData();
-      data.append('image', input.files[0]);
+    <script>
+        const form = document.getElementById('upload-form');
+        const imageInput = document.getElementById('image-input');
+        const resultImg = document.getElementById('result-img');
+        const labelsOutput = document.getElementById('labels-output');
 
-      const res = await fetch('/predict', {
-        method: 'POST',
-        body: data
-      });
-      const result = await res.json();
-      document.getElementById('resultImg').src = 'data:image/jpeg;base64,' + result.result;
-    }
-  </script>
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const file = imageInput.files[0];
+            const formData = new FormData();
+            formData.append('image', file);
+
+            const res = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+
+            if (data.result) {
+                resultImg.src = `data:image/jpeg;base64,${data.result}`;
+                labelsOutput.textContent = JSON.stringify(data.labels, null, 2);
+            } else {
+                resultImg.src = "";
+                labelsOutput.textContent = "No objects detected.";
+            }
+        };
+    </script>
 </body>
 </html>
